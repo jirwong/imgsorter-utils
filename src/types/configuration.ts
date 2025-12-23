@@ -3,3 +3,5 @@ export type RunConfiguration = {
   extensions: string[];
   directories: string[];
 };
+
+// loadRunConfiguration has been moved to ../utilities/load-config.

@@ -1,6 +1,7 @@
 import { DbService } from './services/db-service';
 import { fileService } from './services/file-service';
-import { RunConfiguration } from './types/configuration';
+import type { RunConfiguration } from './types/configuration';
+import { loadRunConfiguration } from './utilities/load-config';
 
 export class Runner {
   private db: DbService;
@@ -28,11 +29,7 @@ export class Runner {
 }
 
 (async () => {
-  const config: RunConfiguration = {
-    dbName: 'local.db',
-    extensions: 'jpg,png,gif,jpeg'.split(',').map((ext) => `.${ext.toLowerCase()}`),
-    directories: ['/Users/jir.wong/development/personal/image-sorter/imgsorter-utils/test-images'],
-  };
+  const config = await loadRunConfiguration('config.yaml');
 
   const runner = new Runner(config);
   await runner.run();
