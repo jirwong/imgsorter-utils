@@ -41,4 +41,5 @@ Thumbs.db
 # Misc
 *.tgz
 .nyc_output/
+test-images/
 
