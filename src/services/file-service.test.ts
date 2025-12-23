@@ -43,7 +43,7 @@ describe('fileService', () => {
     it('returns file info for an existing file', async () => {
       const filePath = await createFile(rootDir, 'images/sample.PNG', 'hello world');
 
-      const info = (await fileService.readFile(filePath)) as FileEntry;
+      const info = (await fileService.readFileInfo(filePath)) as FileEntry;
 
       const stats = await fs.stat(filePath);
 
@@ -56,7 +56,7 @@ describe('fileService', () => {
 
     it('throws when file does not exist', async () => {
       const nonExistent = join(rootDir, 'does-not-exist.png');
-      await expect(fileService.readFile(nonExistent)).rejects.toThrow();
+      await expect(fileService.readFileInfo(nonExistent)).rejects.toThrow();
     });
   });
 

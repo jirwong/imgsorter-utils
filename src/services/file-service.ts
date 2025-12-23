@@ -6,7 +6,9 @@ import type { FileEntry } from '../types/file-types';
 const EDGE_CHUNK_SIZE = 16 * 1024; // 16KB
 
 export const fileService = {
-  async readFile(path: string, getHash: boolean = true): Promise<FileEntry> {
+  async readFileInfo(path: string, getHash: boolean = true): Promise<FileEntry> {
+    console.log(`Reading file info for: ${path}`);
+
     const stats = await fs.stat(path);
 
     const size = stats.size;
@@ -75,7 +77,7 @@ export const fileService = {
         if (entry.isDirectory()) {
           await walk(fullPath);
         } else if (entry.isFile()) {
-          const info = await fileService.readFile(fullPath);
+          const info = await fileService.readFileInfo(fullPath);
 
           if (normalizedExtensions && normalizedExtensions.length > 0) {
             if (!normalizedExtensions.includes(info.extension.toLowerCase())) {

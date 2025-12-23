@@ -43,3 +43,4 @@ Thumbs.db
 .nyc_output/
 test-images/
 
+local.db

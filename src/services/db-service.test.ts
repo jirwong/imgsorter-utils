@@ -122,4 +122,86 @@ describe('DbService', () => {
 
     db.close();
   });
+
+  it('upserts a FileEntry when called with the same directory and filename', () => {
+    const service = new DbService(dbPath);
+
+    const original: FileEntry = {
+      size: 123,
+      directory: '/tmp',
+      extension: '.png',
+      path: '/tmp/foo.png',
+      filename: 'foo.png',
+      birthtime: new Date('2025-01-01T00:00:00.000Z'),
+      hash: 'abc123',
+    };
+
+    const updated: FileEntry = {
+      ...original,
+      size: 456,
+      hash: 'updated-hash',
+      birthtime: new Date('2026-02-02T00:00:00.000Z'),
+    };
+
+    service.insertFileInfo(original);
+    service.insertFileInfo(updated);
+
+    const db = new Database(dbPath);
+    const rows = db.prepare('SELECT size, directory, extension, fileName, createdAt, hash FROM entries').all() as {
+      size: number;
+      directory: string;
+      extension: string;
+      fileName: string;
+      createdAt: string;
+      hash: string | null;
+    }[];
+
+    expect(rows.length).toBe(1);
+    const row = rows[0];
+    expect(row.size).toBe(updated.size);
+    expect(row.directory).toBe(updated.directory);
+    expect(row.extension).toBe(updated.extension);
+    expect(row.fileName).toBe(updated.filename);
+    expect(row.createdAt).toBe(updated.birthtime.toISOString());
+    expect(row.hash).toBe(updated.hash);
+
+    db.close();
+  });
+
+  it('upserts a FileRecord when called with the same filename and hash', () => {
+    const service = new DbService(dbPath);
+
+    const original: FileRecord = {
+      filename: 'baz.png',
+      hash: 'ghi789',
+      count: 1,
+      directories: ['/tmp/x'],
+    };
+
+    const updated: FileRecord = {
+      ...original,
+      count: 3,
+      directories: ['/tmp/x', '/tmp/y'],
+    };
+
+    service.insertFileRecord(original);
+    service.insertFileRecord(updated);
+
+    const db = new Database(dbPath);
+    const rows = db.prepare('SELECT fileName, hash, count, directories FROM records').all() as {
+      fileName: string;
+      hash: string;
+      count: number;
+      directories: string;
+    }[];
+
+    expect(rows.length).toBe(1);
+    const row = rows[0];
+    expect(row.fileName).toBe(updated.filename);
+    expect(row.hash).toBe(updated.hash);
+    expect(row.count).toBe(updated.count);
+    expect(JSON.parse(row.directories)).toEqual(updated.directories);
+
+    db.close();
+  });
 });

@@ -22,7 +22,8 @@ export class DbService {
         extension TEXT,
         fileName TEXT,
         createdAt TEXT,
-        hash TEXT
+        hash TEXT,
+        UNIQUE(directory, fileName)
     )`
       )
       .run();
@@ -41,7 +42,8 @@ export class DbService {
         fileName TEXT,
         hash TEXT,
         count INTEGER,
-        directories TEXT
+        directories TEXT,
+        UNIQUE(fileName, hash)
     )`
       )
       .run();
@@ -54,7 +56,12 @@ export class DbService {
   insertFileInfo(fileInfo: FileEntry) {
     const insertSql = this.db.prepare(
       `INSERT INTO entries (size, directory, extension, fileName, createdAt, hash)
-       VALUES (@size, @directory, @extension, @fileName, @createdAt, @hash)`
+       VALUES (@size, @directory, @extension, @fileName, @createdAt, @hash)
+       ON CONFLICT(directory, fileName) DO UPDATE SET
+         size = excluded.size,
+         extension = excluded.extension,
+         createdAt = excluded.createdAt,
+         hash = excluded.hash`
     );
     insertSql.run({
       size: fileInfo.size,
@@ -69,7 +76,10 @@ export class DbService {
   insertFileRecord(fileRecord: FileRecord) {
     const insertSql = this.db.prepare(
       `INSERT INTO records (fileName, hash, count, directories)
-       VALUES (@fileName, @hash, @count, @directories)`
+       VALUES (@fileName, @hash, @count, @directories)
+       ON CONFLICT(fileName, hash) DO UPDATE SET
+         count = excluded.count,
+         directories = excluded.directories`
     );
     insertSql.run({
       fileName: fileRecord.filename,
