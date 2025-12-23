@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import type { Database as DatabaseType } from 'better-sqlite3';
-import { FileEntry, FileRecord } from './file-service';
+import type { FileEntry, FileRecord } from '../types/file-types';
 
 export class DbService {
   private db: DatabaseType;

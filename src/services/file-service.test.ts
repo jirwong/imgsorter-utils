@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname, extname, basename } from 'node:path';
-import { fileService, type FileEntry } from './file-service';
+import { fileService } from './file-service';
+import type { FileEntry } from '../types/file-types';
 import { createHash } from 'node:crypto';
 
 // Tests for fileService
@@ -147,4 +148,3 @@ describe('fileService', () => {
     });
   });
 });
-

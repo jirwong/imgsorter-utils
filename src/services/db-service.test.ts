@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { promises as fs } from 'node:fs';
 import Database from 'better-sqlite3';
 import { DbService } from './db-service';
-import type { FileEntry, FileRecord } from './file-service';
+import type { FileEntry, FileRecord } from '../types/file-types';
 
 async function removeFile(path: string) {
   try {
@@ -123,4 +123,3 @@ describe('DbService', () => {
     db.close();
   });
 });
-

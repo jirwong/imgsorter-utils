@@ -1,25 +1,9 @@
 import { promises as fs } from 'node:fs';
 import { dirname, extname, basename, join } from 'node:path';
 import { createHash } from 'node:crypto';
+import type { FileEntry } from '../types/file-types';
 
 const EDGE_CHUNK_SIZE = 16 * 1024; // 16KB
-
-export type FileEntry = {
-  size: number;
-  directory: string;
-  extension: string;
-  path?: string;
-  filename: string;
-  birthtime: Date;
-  hash?: string;
-};
-
-export type FileRecord = {
-  filename: string;
-  hash: string;
-  count: number;
-  directories: string[];
-};
 
 export const fileService = {
   async readFile(path: string, getHash: boolean = true): Promise<FileEntry> {
