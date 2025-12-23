@@ -18,6 +18,8 @@ export class Runner {
   }
 
   private async processDirectories(directories: string[], extensions?: string[]): Promise<void> {
+    console.log('Processing directories:', directories);
+
     for (const directory of directories) {
       const files = await fileService.listFilesRecursive(directory, extensions);
 

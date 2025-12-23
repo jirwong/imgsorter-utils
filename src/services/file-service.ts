@@ -7,8 +7,6 @@ const EDGE_CHUNK_SIZE = 16 * 1024; // 16KB
 
 export const fileService = {
   async readFileInfo(path: string, getHash: boolean = true): Promise<FileEntry> {
-    console.log(`Reading file info for: ${path}`);
-
     const stats = await fs.stat(path);
 
     const size = stats.size;
@@ -68,6 +66,8 @@ export const fileService = {
     // Normalize extensions to lowercase once for case-insensitive matching
     const normalizedExtensions = extensions?.map((ext) => ext.toLowerCase());
 
+    console.log('extensions to process = ', normalizedExtensions);
+
     async function walk(dir: string): Promise<void> {
       const entries = await fs.readdir(dir, { withFileTypes: true });
 
@@ -83,6 +83,8 @@ export const fileService = {
             if (!normalizedExtensions.includes(info.extension.toLowerCase())) {
               continue;
             }
+
+            console.log(`Reading file info for: ${fullPath}`);
           }
 
           result.push(info);
