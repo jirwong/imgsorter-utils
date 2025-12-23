@@ -88,4 +88,35 @@ export class DbService {
       directories: JSON.stringify(fileRecord.directories),
     });
   }
+
+  updateFileRecords() {
+    const dedupSql = `select hash,
+                              filename,
+                              json_group_array(distinct directory) as directories,
+                              count(*)                             as row_count
+                       from entries
+                       group by hash, filename
+                       order by filename;
+    `;
+
+    const rows = this.db.prepare(dedupSql).all() as {
+      hash: string;
+      filename: string;
+      directories: string;
+      row_count: number;
+    }[];
+
+    for (const row of rows) {
+      const record: FileRecord = {
+        filename: row.filename,
+        hash: row.hash,
+        count: row.row_count,
+        directories: JSON.parse(row.directories) as string[],
+      };
+
+      console.log('Updating record for hash:', record.hash, 'filename:', record.filename);
+
+      this.insertFileRecord(record);
+    }
+  }
 }

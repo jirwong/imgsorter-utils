@@ -13,9 +13,7 @@ export class Runner {
   }
 
   async run() {
-    // const dbService = new DbService(DB_NAME);
     const files = await this.processDirectory(directories, extensions);
-    // console.log(files);
   }
 
   async processDirectory(directories: string[], extensions?: string[]) {
@@ -26,6 +24,7 @@ export class Runner {
         this.db.insertFileInfo(file);
       }
     }
+    this.db.updateFileRecords();
   }
 }
 
