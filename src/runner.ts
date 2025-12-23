@@ -13,7 +13,11 @@ export class Runner {
   }
 
   async run(): Promise<void> {
+    // TODO : Add configuration to toggle
     await this.processDirectories();
+
+    // TODO : Add configuration to toggle
+    this.db.updateFileRecords();
   }
 
   private async processDirectories(): Promise<void> {
@@ -31,7 +35,6 @@ export class Runner {
 
     console.log('Directories indexing complete. Updating database record...');
 
-    this.db.updateFileRecords();
   }
 }
 

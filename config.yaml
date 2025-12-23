@@ -1,19 +1,48 @@
 dbName: local.db
-extensions: jpg,png,gif,jpeg,mp4,cr3,mov,avi,jpeg,mpg,mpeg,iso,pdf,txt
+extensions: jpg,png,gif,jpeg,mp4,cr3,mov,avi,jpeg,mpg,mpeg,iso,pdf,txt,cr2
 directories:
-  - I:\Japan Photos
-  - I:\Desktop backup
-  - C:\Users\jirwo\Pictures
-  - G:\Aiden
-  - G:\Hi Res Pre Wedding Photos
-  - G:\Melbourne
-  - G:\My Dear pictures
-  - G:\My Wedding
-  - G:\myShow
-  - G:\MyValentines
-  - G:\Old Stuff
-  - G:\Pix
-  - G:\Wedding
-  - G:\wspace
-  - D:\Lorraine
-  - Z:\Pictures
+  # - I:\Japan Photos # Done
+  # - I:\Desktop backup # Done
+  # - I:\Aiden Ipad # Done
+  # - C:\Users\jirwo\Pictures # Done
+  # - G:\Aiden # Done
+  # - G:\Hi Res Pre Wedding Photos
+  # - G:\Melbourne
+  # - G:\My Dear pictures
+  # - G:\My Wedding
+  # - G:\myShow
+  # - G:\MyValentines
+  # - G:\Old Stuff
+  # - G:\Pix
+  # - G:\Wedding
+  # - G:\wspace
+  # - D:\Lorraine
+  # - D:\personal
+  # - D:\Photos
+  # - Z:\Pictures
+  - Z:\Pictures\Aiden
+  - Z:\Pictures\Aqeela
+  - Z:\Pictures\bentley
+  - Z:\Pictures\Concerts
+  - Z:\Pictures\Hi Res Pre Wedding Photos
+  - Z:\Pictures\Japan Photos
+  - Z:\Pictures\Lorraine
+  # - Z:\Pictures\Melbourne
+  # - Z:\Pictures\Moms Phone
+  # - Z:\Pictures\Mt Buller
+  # - Z:\Pictures\My Dear pictures
+  # - Z:\Pictures\myShow
+  # - Z:\Pictures\MyValentines
+  # - Z:\Pictures\MyWedding
+  # - Z:\Pictures\Old Stuff
+  # - Z:\Pictures\Pix
+  # - Z:\Pictures\Sony Cybershot
+  # - Z:\Pictures\Wedding
+  # - Z:\Pictures\wspace
+  - Z:\Jir\Documents\Aiden
+  - Z:\Jir\Documents\Camera
+  - Z:\Jir\Documents\Images
+  - Z:\Jir\Documents\Whatsapp
+  - Z:\Jir\Jir Google Drive\My photos
+  - Z:\Jir\Jir Google Drive\Whitehorse Hip Hop
+  - Z:\Lorraine
