@@ -10,10 +10,6 @@ export class DbService {
     this.createTables();
   }
 
-  getDb() {
-    return this.db;
-  }
-
   private createTables() {
     // formatter: off
     this.db
