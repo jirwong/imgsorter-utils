@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname, extname, basename } from 'node:path';
-import { fileService, type FileInfo } from './file-service';
+import { fileService, type FileEntry } from './file-service';
 import { createHash } from 'node:crypto';
 
 // Tests for fileService
@@ -42,15 +42,15 @@ describe('fileService', () => {
     it('returns file info for an existing file', async () => {
       const filePath = await createFile(rootDir, 'images/sample.PNG', 'hello world');
 
-      const info = (await fileService.readFile(filePath)) as FileInfo;
+      const info = (await fileService.readFile(filePath)) as FileEntry;
 
       const stats = await fs.stat(filePath);
 
-      expect(info.fileName).toBe(basename(filePath));
+      expect(info.filename).toBe(basename(filePath));
       expect(info.directory).toBe(dirname(filePath));
       expect(info.extension).toBe(extname(filePath));
       expect(info.size).toBe(stats.size);
-      expect(info.createdAt).toBeInstanceOf(Date);
+      expect(info.birthtime).toBeInstanceOf(Date);
     });
 
     it('throws when file does not exist', async () => {
@@ -112,7 +112,7 @@ describe('fileService', () => {
       const file3 = await createFile(rootDir, 'c/note.txt', 'three');
 
       const files = await fileService.listFilesRecursive(rootDir);
-      const paths = files.map((f) => join(f.directory, f.fileName));
+      const paths = files.map((f) => join(f.directory, f.filename));
 
       expect(paths).toContain(file1);
       expect(paths).toContain(file2);
@@ -126,7 +126,7 @@ describe('fileService', () => {
       await createFile(rootDir, 'images/readme.txt', 'text');
 
       const files = await fileService.listFilesRecursive(rootDir, ['.JPG', '.pNg']);
-      const paths = files.map((f) => join(f.directory, f.fileName));
+      const paths = files.map((f) => join(f.directory, f.filename));
 
       expect(paths).toContain(jpgLower);
       expect(paths).toContain(jpgUpper);

@@ -4,29 +4,42 @@ import { createHash } from 'node:crypto';
 
 const EDGE_CHUNK_SIZE = 16 * 1024; // 16KB
 
-export type FileInfo = {
+export type FileEntry = {
   size: number;
   directory: string;
   extension: string;
   path?: string;
-  fileName: string;
-  createdAt: Date;
+  filename: string;
+  birthtime: Date;
+  hash?: string;
+};
+
+export type FileRecord = {
+  filename: string;
+  hash: string;
+  count: number;
+  directories: string[];
 };
 
 export const fileService = {
-  async readFile(path: string) {
+  async readFile(path: string, getHash: boolean = true): Promise<FileEntry> {
     const stats = await fs.stat(path);
+
+    const size = stats.size;
     const directory = dirname(path);
     const extension = extname(path);
     const filename = basename(path);
+    const birthtime = stats.birthtime;
+    const hash = getHash ? await fileService.getHashEdges(path) : undefined;
 
     return {
-      size: stats.size,
+      size,
       directory,
       extension,
-      // path,
-      fileName: filename,
-      createdAt: stats.birthtime,
+      path,
+      filename,
+      birthtime,
+      hash,
     };
   },
 
@@ -63,8 +76,8 @@ export const fileService = {
   },
 
   // Recursively list all files under a directory
-  async listFilesRecursive(rootDir: string, extensions?: string[]): Promise<FileInfo[]> {
-    const result: FileInfo[] = [];
+  async listFilesRecursive(rootDir: string, extensions?: string[]): Promise<FileEntry[]> {
+    const result: FileEntry[] = [];
 
     // Normalize extensions to lowercase once for case-insensitive matching
     const normalizedExtensions = extensions?.map((ext) => ext.toLowerCase());
