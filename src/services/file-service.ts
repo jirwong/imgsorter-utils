@@ -69,26 +69,31 @@ export const fileService = {
     console.log('extensions to process = ', normalizedExtensions);
 
     async function walk(dir: string): Promise<void> {
-      const entries = await fs.readdir(dir, { withFileTypes: true });
+      try {
+        const entries = await fs.readdir(dir, { withFileTypes: true });
 
-      for (const entry of entries) {
-        const fullPath = join(dir, entry.name);
+        for (const entry of entries) {
+          const fullPath = join(dir, entry.name);
 
-        if (entry.isDirectory()) {
-          await walk(fullPath);
-        } else if (entry.isFile()) {
-          const info = await fileService.readFileInfo(fullPath);
+          if (entry.isDirectory()) {
+            await walk(fullPath);
+          } else if (entry.isFile()) {
+            const info = await fileService.readFileInfo(fullPath);
 
-          if (normalizedExtensions && normalizedExtensions.length > 0) {
-            if (!normalizedExtensions.includes(info.extension.toLowerCase())) {
-              continue;
+            if (normalizedExtensions && normalizedExtensions.length > 0) {
+              if (!normalizedExtensions.includes(info.extension.toLowerCase())) {
+                continue;
+              }
+
+              console.log(`Reading file info for: ${fullPath}`);
             }
 
-            console.log(`Reading file info for: ${fullPath}`);
+            result.push(info);
           }
-
-          result.push(info);
         }
+      } catch (ex) {
+        console.error("!!! ERROR", ex);
+
       }
     }
 
