@@ -90,14 +90,16 @@ export class DbService {
   }
 
   updateFileRecords() {
-    const dedupSql = `select hash,
-                              filename,
-                              json_group_array(distinct directory) as directories,
-                              count(*)                             as row_count
-                       from entries
-                       group by hash, filename
-                       order by filename;
-    `;
+    const dedupSql =
+
+      `select hash,
+              filename,
+              json_group_array(distinct directory) as directories,
+              count(*)                             as row_count
+       from entries
+       group by hash, filename
+       order by filename;
+      `;
 
     const rows = this.db.prepare(dedupSql).all() as {
       hash: string;
