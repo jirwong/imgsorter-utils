@@ -38,20 +38,20 @@ describe('DbService', () => {
 
     expect(tables.map((t) => t.name)).toEqual(['entries', 'records']);
 
-    const entriesColumns = db.prepare("PRAGMA table_info(entries)").all() as { name: string }[];
-    const recordsColumns = db.prepare("PRAGMA table_info(records)").all() as { name: string }[];
+    const entriesColumns = db.prepare('PRAGMA table_info(entries)').all() as { name: string }[];
+    const recordsColumns = db.prepare('PRAGMA table_info(records)').all() as { name: string }[];
 
     expect(entriesColumns.map((c) => c.name)).toEqual([
       'id',
       'size',
       'directory',
       'extension',
-      'fileName',
-      'createdAt',
+      'filename',
+      'birthtime',
       'hash',
     ]);
 
-    expect(recordsColumns.map((c) => c.name)).toEqual(['id', 'fileName', 'hash', 'count', 'directories']);
+    expect(recordsColumns.map((c) => c.name)).toEqual(['id', 'filename', 'hash', 'count', 'directories']);
 
     db.close();
   });
@@ -72,12 +72,12 @@ describe('DbService', () => {
     service.insertFileInfo(entry);
 
     const db = new Database(dbPath);
-    const rows = db.prepare('SELECT size, directory, extension, fileName, createdAt, hash FROM entries').all() as {
+    const rows = db.prepare('SELECT size, directory, extension, filename, birthtime, hash FROM entries').all() as {
       size: number;
       directory: string;
       extension: string;
-      fileName: string;
-      createdAt: string;
+      filename: string;
+      birthtime: string;
       hash: string | null;
     }[];
 
@@ -86,8 +86,8 @@ describe('DbService', () => {
     expect(row.size).toBe(entry.size);
     expect(row.directory).toBe(entry.directory);
     expect(row.extension).toBe(entry.extension);
-    expect(row.fileName).toBe(entry.filename);
-    expect(row.createdAt).toBe(entry.birthtime.toISOString());
+    expect(row.filename).toBe(entry.filename);
+    expect(row.birthtime).toBe(entry.birthtime.toISOString());
     expect(row.hash).toBe(entry.hash);
 
     db.close();
@@ -106,8 +106,8 @@ describe('DbService', () => {
     service.insertFileRecord(record);
 
     const db = new Database(dbPath);
-    const rows = db.prepare('SELECT fileName, hash, count, directories FROM records').all() as {
-      fileName: string;
+    const rows = db.prepare('SELECT filename, hash, count, directories FROM records').all() as {
+      filename: string;
       hash: string;
       count: number;
       directories: string;
@@ -115,7 +115,7 @@ describe('DbService', () => {
 
     expect(rows.length).toBe(1);
     const row = rows[0];
-    expect(row.fileName).toBe(record.filename);
+    expect(row.filename).toBe(record.filename);
     expect(row.hash).toBe(record.hash);
     expect(row.count).toBe(record.count);
     expect(JSON.parse(row.directories)).toEqual(record.directories);
@@ -147,12 +147,12 @@ describe('DbService', () => {
     service.insertFileInfo(updated);
 
     const db = new Database(dbPath);
-    const rows = db.prepare('SELECT size, directory, extension, fileName, createdAt, hash FROM entries').all() as {
+    const rows = db.prepare('SELECT size, directory, extension, filename, birthtime, hash FROM entries').all() as {
       size: number;
       directory: string;
       extension: string;
-      fileName: string;
-      createdAt: string;
+      filename: string;
+      birthtime: string;
       hash: string | null;
     }[];
 
@@ -161,8 +161,8 @@ describe('DbService', () => {
     expect(row.size).toBe(updated.size);
     expect(row.directory).toBe(updated.directory);
     expect(row.extension).toBe(updated.extension);
-    expect(row.fileName).toBe(updated.filename);
-    expect(row.createdAt).toBe(updated.birthtime.toISOString());
+    expect(row.filename).toBe(updated.filename);
+    expect(row.birthtime).toBe(updated.birthtime.toISOString());
     expect(row.hash).toBe(updated.hash);
 
     db.close();
@@ -188,8 +188,8 @@ describe('DbService', () => {
     service.insertFileRecord(updated);
 
     const db = new Database(dbPath);
-    const rows = db.prepare('SELECT fileName, hash, count, directories FROM records').all() as {
-      fileName: string;
+    const rows = db.prepare('SELECT filename, hash, count, directories FROM records').all() as {
+      filename: string;
       hash: string;
       count: number;
       directories: string;
@@ -197,7 +197,7 @@ describe('DbService', () => {
 
     expect(rows.length).toBe(1);
     const row = rows[0];
-    expect(row.fileName).toBe(updated.filename);
+    expect(row.filename).toBe(updated.filename);
     expect(row.hash).toBe(updated.hash);
     expect(row.count).toBe(updated.count);
     expect(JSON.parse(row.directories)).toEqual(updated.directories);

@@ -20,16 +20,16 @@ export class DbService {
         size INTEGER,
         directory TEXT,
         extension TEXT,
-        fileName TEXT,
-        createdAt TEXT,
+        filename TEXT,
+        birthtime TEXT,
         hash TEXT,
-        UNIQUE(directory, fileName)
+        UNIQUE(directory, filename)
     )`
       )
       .run();
     // formatter: on
 
-    this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_entries_fileName ON entries (fileName)`).run();
+    this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_entries_filename ON entries (filename)`).run();
     this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_entries_hash ON entries (hash)`).run();
     this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_entries_directory ON entries (directory)`).run();
 
@@ -39,50 +39,50 @@ export class DbService {
         `
     CREATE TABLE IF NOT EXISTS records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fileName TEXT,
+        filename TEXT,
         hash TEXT,
         count INTEGER,
         directories TEXT,
-        UNIQUE(fileName, hash)
+        UNIQUE(filename, hash)
     )`
       )
       .run();
     // formatter: on
 
-    this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_records_fileName ON records (fileName)`).run();
+    this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_records_filename ON records (filename)`).run();
     this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_records_hash ON records (hash)`).run();
   }
 
   insertFileInfo(fileInfo: FileEntry) {
     const insertSql = this.db.prepare(
-      `INSERT INTO entries (size, directory, extension, fileName, createdAt, hash)
-       VALUES (@size, @directory, @extension, @fileName, @createdAt, @hash)
-       ON CONFLICT(directory, fileName) DO UPDATE SET
+      `INSERT INTO entries (size, directory, extension, filename, birthtime, hash)
+       VALUES (@size, @directory, @extension, @filename, @birthtime, @hash)
+       ON CONFLICT(directory, filename) DO UPDATE SET
          size = excluded.size,
          extension = excluded.extension,
-         createdAt = excluded.createdAt,
+         birthtime = excluded.birthtime,
          hash = excluded.hash`
     );
     insertSql.run({
       size: fileInfo.size,
       directory: fileInfo.directory,
       extension: fileInfo.extension,
-      fileName: fileInfo.filename,
-      createdAt: fileInfo.birthtime.toISOString(),
+      filename: fileInfo.filename,
+      birthtime: fileInfo.birthtime.toISOString(),
       hash: fileInfo.hash ?? null,
     });
   }
 
   insertFileRecord(fileRecord: FileRecord) {
     const insertSql = this.db.prepare(
-      `INSERT INTO records (fileName, hash, count, directories)
-       VALUES (@fileName, @hash, @count, @directories)
-       ON CONFLICT(fileName, hash) DO UPDATE SET
+      `INSERT INTO records (filename, hash, count, directories)
+       VALUES (@filename, @hash, @count, @directories)
+       ON CONFLICT(filename, hash) DO UPDATE SET
          count = excluded.count,
          directories = excluded.directories`
     );
     insertSql.run({
-      fileName: fileRecord.filename,
+      filename: fileRecord.filename,
       hash: fileRecord.hash,
       count: fileRecord.count,
       directories: JSON.stringify(fileRecord.directories),
