@@ -17,7 +17,6 @@
     "@types/node": "^22.10.5",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
-    "vitest": "^4.0.16",
-    "@vitest/ui": "^4.0.16"
+    "vitest": "^2.1.4"
   }
 }

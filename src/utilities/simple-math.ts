@@ -1,3 +1,3 @@
-function addOne(input: number): number {
+export function addOne(input: number): number {
   return input + 1;
 }
