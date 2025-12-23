@@ -7,6 +7,9 @@ export class DbService {
 
   constructor(dbPath: string) {
     this.db = new Database(dbPath);
+
+    this.db.pragma('journal_mode = WAL');
+
     this.createTables();
   }
 
@@ -23,7 +26,8 @@ export class DbService {
         filename TEXT,
         birthtime TEXT,
         hash TEXT,
-        UNIQUE(directory, filename)
+        path TEXT,
+        UNIQUE(path)
     )`
       )
       .run();
@@ -57,7 +61,7 @@ export class DbService {
     const insertSql = this.db.prepare(
       `INSERT INTO entries (size, directory, extension, filename, birthtime, hash)
        VALUES (@size, @directory, @extension, @filename, @birthtime, @hash)
-       ON CONFLICT(directory, filename) DO UPDATE SET
+       ON CONFLICT(path) DO UPDATE SET
          size = excluded.size,
          extension = excluded.extension,
          birthtime = excluded.birthtime,
