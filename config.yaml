@@ -1,5 +1,19 @@
 dbName: local.db
-extensions: jpg,png,gif,jpeg
+extensions: jpg,png,gif,jpeg,mp4,cr3,mov,avi,jpeg,mpg,mpeg,iso,pdf,txt
 directories:
-  - /Users/jir.wong/tmp
-
+  - I:\Japan Photos
+  - I:\Desktop backup
+  - C:\Users\jirwo\Pictures
+  - G:\Aiden
+  - G:\Hi Res Pre Wedding Photos
+  - G:\Melbourne
+  - G:\My Dear pictures
+  - G:\My Wedding
+  - G:\myShow
+  - G:\MyValentines
+  - G:\Old Stuff
+  - G:\Pix
+  - G:\Wedding
+  - G:\wspace
+  - D:\Lorraine
+  - Z:\Pictures

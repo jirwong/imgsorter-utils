@@ -31,9 +31,7 @@ describe('DbService', () => {
 
     const db = new Database(dbPath);
     const tables = db
-      .prepare(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('entries', 'records') ORDER BY name"
-      )
+      .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('entries', 'records') ORDER BY name")
       .all() as { name: string }[];
 
     expect(tables.map((t) => t.name)).toEqual(['entries', 'records']);
@@ -49,6 +47,7 @@ describe('DbService', () => {
       'filename',
       'birthtime',
       'hash',
+      'path',
     ]);
 
     expect(recordsColumns.map((c) => c.name)).toEqual(['id', 'filename', 'hash', 'count', 'directories']);
@@ -123,7 +122,7 @@ describe('DbService', () => {
     db.close();
   });
 
-  it('upserts a FileEntry when called with the same directory and filename', () => {
+  it('upserts a FileEntry when called with the same path', () => {
     const service = new DbService(dbPath);
 
     const original: FileEntry = {
@@ -140,6 +139,7 @@ describe('DbService', () => {
       ...original,
       size: 456,
       hash: 'updated-hash',
+      path: '/tmp/foo.png',
       birthtime: new Date('2026-02-02T00:00:00.000Z'),
     };
 
@@ -147,13 +147,16 @@ describe('DbService', () => {
     service.insertFileInfo(updated);
 
     const db = new Database(dbPath);
-    const rows = db.prepare('SELECT size, directory, extension, filename, birthtime, hash FROM entries').all() as {
+    const rows = db
+      .prepare('SELECT size, directory, extension, filename, birthtime, hash, path FROM entries')
+      .all() as {
       size: number;
       directory: string;
       extension: string;
       filename: string;
       birthtime: string;
       hash: string | null;
+      path: string;
     }[];
 
     expect(rows.length).toBe(1);
@@ -164,6 +167,7 @@ describe('DbService', () => {
     expect(row.filename).toBe(updated.filename);
     expect(row.birthtime).toBe(updated.birthtime.toISOString());
     expect(row.hash).toBe(updated.hash);
+    expect(row.path).toBe(updated.path);
 
     db.close();
   });

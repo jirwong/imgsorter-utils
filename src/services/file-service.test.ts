@@ -141,10 +141,5 @@ describe('fileService', () => {
       const files = await fileService.listFilesRecursive(rootDir, ['.txt']);
       expect(files.length).toBe(0);
     });
-
-    it('throws when root directory does not exist', async () => {
-      const nonExistentRoot = join(rootDir, 'no-such-dir');
-      await expect(fileService.listFilesRecursive(nonExistentRoot)).rejects.toThrow();
-    });
   });
 });

@@ -59,13 +59,15 @@ export class DbService {
 
   insertFileInfo(fileInfo: FileEntry) {
     const insertSql = this.db.prepare(
-      `INSERT INTO entries (size, directory, extension, filename, birthtime, hash)
-       VALUES (@size, @directory, @extension, @filename, @birthtime, @hash)
+      `INSERT INTO entries (size, directory, extension, filename, birthtime, hash, path)
+       VALUES (@size, @directory, @extension, @filename, @birthtime, @hash, @path)
        ON CONFLICT(path) DO UPDATE SET
          size = excluded.size,
          extension = excluded.extension,
          birthtime = excluded.birthtime,
-         hash = excluded.hash`
+         hash = excluded.hash,
+         filename = excluded.filename,
+         directory = excluded.directory`
     );
     insertSql.run({
       size: fileInfo.size,
@@ -74,6 +76,7 @@ export class DbService {
       filename: fileInfo.filename,
       birthtime: fileInfo.birthtime.toISOString(),
       hash: fileInfo.hash ?? null,
+      path: fileInfo.path,
     });
   }
 
@@ -94,9 +97,7 @@ export class DbService {
   }
 
   updateFileRecords() {
-    const dedupSql =
-
-      `select hash,
+    const dedupSql = `select hash,
               filename,
               json_group_array(distinct directory) as directories,
               count(*)                             as row_count

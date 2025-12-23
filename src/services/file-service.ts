@@ -92,8 +92,7 @@ export const fileService = {
           }
         }
       } catch (ex) {
-        console.error("!!! ERROR", ex);
-
+        console.error('!!! ERROR', ex);
       }
     }
 

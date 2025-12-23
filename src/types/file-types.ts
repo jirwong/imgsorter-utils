@@ -14,4 +14,3 @@ export type FileRecord = {
   count: number;
   directories: string[];
 };
-

@@ -13,11 +13,12 @@ export class Runner {
   }
 
   async run(): Promise<void> {
-    await this.processDirectories(this.config.directories, this.config.extensions);
-    this.db.updateFileRecords();
+    await this.processDirectories();
   }
 
-  private async processDirectories(directories: string[], extensions?: string[]): Promise<void> {
+  private async processDirectories(): Promise<void> {
+    const { directories, extensions } = this.config;
+
     console.log('Processing directories:', directories);
 
     for (const directory of directories) {
@@ -27,6 +28,10 @@ export class Runner {
         this.db.insertFileInfo(file);
       }
     }
+
+    console.log('Directories indexing complete. Updating database record...');
+
+    this.db.updateFileRecords();
   }
 }
 
