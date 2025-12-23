@@ -52,6 +52,7 @@ describe('fileService', () => {
       expect(info.extension).toBe(extname(filePath));
       expect(info.size).toBe(stats.size);
       expect(info.birthtime).toBeInstanceOf(Date);
+      expect(info.path).toBe(filePath);
     });
 
     it('throws when file does not exist', async () => {

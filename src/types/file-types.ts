@@ -2,7 +2,7 @@ export type FileEntry = {
   size: number;
   directory: string;
   extension: string;
-  path?: string;
+  path: string;
   filename: string;
   birthtime: Date;
   hash?: string;
