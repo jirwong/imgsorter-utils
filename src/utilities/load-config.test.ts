@@ -39,6 +39,7 @@ describe('loadRunConfiguration', () => {
       update_records: true
       process_directories: false
       resync_directories: true
+      resync_check_actual_file: true
     `;
 
     await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
@@ -51,6 +52,7 @@ describe('loadRunConfiguration', () => {
     expect(config.update_records).toBe(true);
     expect(config.process_directories).toBe(false);
     expect(config.resync_directories).toBe(true);
+    expect(config.resync_check_actual_file).toBe(true);
   });
 
   it('throws if update_records is not a boolean when provided', async () => {
@@ -101,6 +103,22 @@ describe('loadRunConfiguration', () => {
     );
   });
 
+  it('throws if resync_check_actual_file is not a boolean when provided', async () => {
+    const yamlContent = `
+      dbName: test.db
+      directories:
+        - ./images
+      extensions: .png
+      resync_check_actual_file: 123
+    `;
+
+    await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
+
+    await expect(loadRunConfiguration('config.yaml')).rejects.toThrow(
+      'config.yaml: resync_check_actual_file must be a boolean if specified'
+    );
+  });
+
   it('allows omitting optional boolean flags', async () => {
     const yamlContent = `
       dbName: test.db
@@ -116,5 +134,6 @@ describe('loadRunConfiguration', () => {
     expect(config.update_records).toBeUndefined();
     expect(config.process_directories).toBeUndefined();
     expect(config.resync_directories).toBeUndefined();
+    expect(config.resync_check_actual_file).toBeUndefined();
   });
 });

@@ -20,7 +20,7 @@ export class Runner {
     }
 
     if (this.config.resync_directories) {
-      await this.resyncDirectories();
+      await this.resyncDirectories(this.config.resync_check_actual_file);
     }
 
     if (this.config.update_records) {
@@ -46,20 +46,33 @@ export class Runner {
     console.log('Processed all directories.');
   }
 
-  private async resyncDirectories(): Promise<void> {
-    const { directories } = this.config;
+  private async resyncDirectories(checkActualFile: boolean = false): Promise<void> {
+    const { directories, extensions } = this.config;
 
     console.log('Resyncing directories:', directories);
 
     for (const directory of directories) {
       const entries = this.db.getFileEntriesByDirectory(directory);
 
-      for (const entry of entries) {
-        console.log(`Checking file existence: ${entry.path}`);
-        const exists = await fileService.fileExists(entry.path);
-        if (!exists) {
-          this.db.deleteFileEntryByPath(entry.path);
-          console.log(`Deleted missing file entry: ${entry.path}`);
+      if (checkActualFile) {
+        console.log('Checking actual file existence for entries...');
+        for (const entry of entries) {
+          console.log(`Checking file existence: ${entry.path}`);
+          const exists = await fileService.fileExists(entry.path);
+          if (!exists) {
+            this.db.deleteFileEntryByPath(entry.path);
+            console.log(`Deleted missing file entry: ${entry.path}`);
+          }
+        }
+      } else {
+        console.log('Checking file entries against current directory listing...');
+        const files = await fileService.listFilesRecursive(directory, extensions, false);
+        for (const entry of entries) {
+          const found = files.find((file) => file.path === entry.path);
+          if (!found) {
+            this.db.deleteFileEntryByPath(entry.path);
+            console.log(`Deleted missing file entry: ${entry.path}`);
+          }
         }
       }
     }

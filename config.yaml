@@ -3,7 +3,9 @@ extensions: jpg,png,gif,jpeg,mp4,cr3,mov,avi,jpeg,mpg,mpeg,iso,pdf,txt,cr2,zip,d
 process_directories: false
 update_records: false
 resync_directories: true
+resync_check_actual_file: false
 directories:
+  - /Users/jir.wong/tmp
 #   - I:\Japan Photos # Done
 # - I:\Desktop backup # Done
 # - I:\Aiden Ipad # Done

@@ -68,6 +68,15 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
             throw new Error('config.yaml: resync_directories must be a boolean if specified');
           })();
 
+  const resync_check_actual_file =
+    typeof obj.resync_check_actual_file === 'boolean'
+      ? obj.resync_check_actual_file
+      : obj.resync_check_actual_file === undefined
+        ? undefined
+        : (() => {
+            throw new Error('config.yaml: resync_check_actual_file must be a boolean if specified');
+          })();
+
   return {
     dbName: obj.dbName,
     directories: obj.directories as string[],
@@ -75,5 +84,6 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
     update_records,
     process_directories,
     resync_directories,
+    resync_check_actual_file,
   };
 }

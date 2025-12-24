@@ -5,4 +5,5 @@ export type RunConfiguration = {
   update_records?: boolean;
   process_directories?: boolean;
   resync_directories?: boolean;
+  resync_check_actual_file?: boolean;
 };
