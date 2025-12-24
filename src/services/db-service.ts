@@ -47,6 +47,7 @@ export class DbService {
         hash TEXT,
         count INTEGER,
         directories TEXT,
+        extension TEXT,
         size INTEGER,
         UNIQUE(filename, hash)
     )`
@@ -83,12 +84,13 @@ export class DbService {
 
   insertFileRecord(fileRecord: FileRecord) {
     const insertSql = this.db.prepare(
-      `INSERT INTO records (filename, hash, count, directories, size)
-       VALUES (@filename, @hash, @count, @directories, @size)
+      `INSERT INTO records (filename, hash, count, directories, size, extension)
+       VALUES (@filename, @hash, @count, @directories, @size, @extension)
        ON CONFLICT(filename, hash) DO UPDATE SET
          count = excluded.count,
          directories = excluded.directories,
-         size = excluded.size`
+         size = excluded.size,
+         extension = excluded.extension`
     );
     insertSql.run({
       filename: fileRecord.filename,
@@ -96,6 +98,7 @@ export class DbService {
       count: fileRecord.count,
       directories: fileRecord.directories,
       size: fileRecord.size,
+      extension: fileRecord.extension,
     });
   }
 
@@ -103,6 +106,7 @@ export class DbService {
     const dedupSql = `select hash,
               filename,
               size,
+              extension,
               cast(json_group_array(distinct directory) as varchar) as directories,
               count(*)                             as row_count
        from entries
@@ -114,6 +118,7 @@ export class DbService {
       hash: string;
       filename: string;
       directories: string;
+      extension: string;
       row_count: number;
       size: number;
     }[];
@@ -123,6 +128,7 @@ export class DbService {
         filename: row.filename,
         hash: row.hash,
         count: row.row_count,
+        extension: row.extension,
         // replace \\ with \ to fix Windows paths stored in JSON array
         directories: row.directories.replace(/\\\\/g, '\\'),
         size: row.size,

@@ -12,6 +12,7 @@ export type FileRecord = {
   filename: string;
   hash: string;
   count: number;
+  extension: string;
   directories: string;
   size:number;
 };
