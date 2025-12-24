@@ -69,7 +69,7 @@ export const fileService = {
   },
 
   // Recursively list all files under a directory
-  async listFilesRecursive(rootDir: string, extensions?: string[]): Promise<FileEntry[]> {
+  async listFilesRecursive(rootDir: string, extensions?: string[], getHash: boolean = true): Promise<FileEntry[]> {
     const result: FileEntry[] = [];
 
     // Normalize extensions to lowercase once for case-insensitive matching
@@ -87,7 +87,7 @@ export const fileService = {
           if (entry.isDirectory()) {
             await walk(fullPath);
           } else if (entry.isFile()) {
-            const info = await fileService.readFileInfo(fullPath);
+            const info = await fileService.readFileInfo(fullPath, getHash);
 
             if (normalizedExtensions && normalizedExtensions.length > 0) {
               if (!normalizedExtensions.includes(info.extension.toLowerCase())) {

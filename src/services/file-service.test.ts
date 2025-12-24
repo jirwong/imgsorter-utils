@@ -39,6 +39,16 @@ describe('fileService', () => {
     await removeDirRecursive(rootDir);
   });
 
+  describe('fileExists', () => {
+    it('returns true for an existing file and false for a missing one', async () => {
+      const existing = await createFile(rootDir, 'exists.txt', 'hello');
+      const missing = join(rootDir, 'missing.txt');
+
+      await expect(fileService.fileExists(existing)).resolves.toBe(true);
+      await expect(fileService.fileExists(missing)).resolves.toBe(false);
+    });
+  });
+
   describe('readFile', () => {
     it('returns file info for an existing file', async () => {
       const filePath = await createFile(rootDir, 'images/sample.PNG', 'hello world');
@@ -53,6 +63,14 @@ describe('fileService', () => {
       expect(info.size).toBe(stats.size);
       expect(info.birthtime).toBeInstanceOf(Date);
       expect(info.path).toBe(filePath);
+    });
+
+    it('can skip hash calculation when getHash is false', async () => {
+      const filePath = await createFile(rootDir, 'images/nohash.png', 'content');
+
+      const info = (await fileService.readFileInfo(filePath, false)) as FileEntry;
+
+      expect(info.hash).toBeUndefined();
     });
 
     it('throws when file does not exist', async () => {
@@ -101,6 +119,29 @@ describe('fileService', () => {
       expect(hashA).not.toBe(hashB);
     });
 
+    it('handles large files by hashing only the first and last 16KB', async () => {
+      const edgeSize = 16 * 1024;
+      const totalSize = edgeSize * 3; // > 2 * EDGE_CHUNK_SIZE
+      const buffer = Buffer.alloc(totalSize, 0);
+
+      // Make first 16KB 'A', middle 16KB 'M', last 16KB 'Z'
+      buffer.fill('A'.charCodeAt(0), 0, edgeSize);
+      buffer.fill('M'.charCodeAt(0), edgeSize, 2 * edgeSize);
+      buffer.fill('Z'.charCodeAt(0), 2 * edgeSize);
+
+      const filePath = await createFile(rootDir, 'files/large.bin', buffer.toString('binary'));
+
+      const expectedHash = (() => {
+        const h = createHash('sha256');
+        h.update(buffer.subarray(0, edgeSize));
+        h.update(buffer.subarray(totalSize - edgeSize));
+        return h.digest('hex');
+      })();
+
+      const actual = await fileService.getHashEdges(filePath);
+      expect(actual).toBe(expectedHash);
+    });
+
     it('throws when file does not exist', async () => {
       const nonExistent = join(rootDir, 'missing.bin');
       await expect(fileService.getHashEdges(nonExistent)).rejects.toThrow();
@@ -141,6 +182,30 @@ describe('fileService', () => {
 
       const files = await fileService.listFilesRecursive(rootDir, ['.txt']);
       expect(files.length).toBe(0);
+    });
+
+    it('respects getHash=false and does not populate hash', async () => {
+      const file1 = await createFile(rootDir, 'a/photo1.jpg', 'one');
+
+      const files = await fileService.listFilesRecursive(rootDir, undefined, false);
+
+      const match = files.find((f) => join(f.directory, f.filename) === file1)!;
+      expect(match.hash).toBeUndefined();
+    });
+
+    it('continues walking when a directory cannot be read', async () => {
+      // Create a subdirectory we will later make unreadable or delete
+      const badDir = join(rootDir, 'bad');
+      await fs.mkdir(badDir, { recursive: true });
+      const goodFile = await createFile(rootDir, 'good/file.txt', 'ok');
+
+      // Remove badDir so readdir throws ENOENT
+      await fs.rmdir(badDir);
+
+      const files = await fileService.listFilesRecursive(rootDir);
+      const paths = files.map((f) => join(f.directory, f.filename));
+
+      expect(paths).toContain(goodFile);
     });
   });
 });
