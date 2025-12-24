@@ -33,6 +33,8 @@ describe('loadRunConfiguration', () => {
       directories:
         - ./images
         - ./more-images
+      ignore_directories:
+        - ./images/ignore-this
       extensions:
         - .png
         - jpg
@@ -48,6 +50,36 @@ describe('loadRunConfiguration', () => {
 
     expect(config.dbName).toBe('test.db');
     expect(config.directories).toEqual(['./images', './more-images']);
+    expect(config.ignore_directories).toEqual(['./images/ignore-this']);
+    expect(config.extensions).toEqual(['.png', '.jpg']);
+    expect(config.update_records).toBe(true);
+    expect(config.process_directories).toBe(false);
+    expect(config.resync_directories).toBe(true);
+    expect(config.resync_check_actual_file).toBe(true);
+  });
+
+  it('loads configuration from YAML file when ignore_directories is not provided', async () => {
+    const yamlContent = `
+      dbName: test.db
+      directories:
+        - ./images
+        - ./more-images
+      extensions:
+        - .png
+        - jpg
+      update_records: true
+      process_directories: false
+      resync_directories: true
+      resync_check_actual_file: true
+    `;
+
+    await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
+
+    const config = await loadRunConfiguration('config.yaml');
+
+    expect(config.dbName).toBe('test.db');
+    expect(config.directories).toEqual(['./images', './more-images']);
+    expect(config.ignore_directories).toBeUndefined();
     expect(config.extensions).toEqual(['.png', '.jpg']);
     expect(config.update_records).toBe(true);
     expect(config.process_directories).toBe(false);

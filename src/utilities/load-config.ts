@@ -22,6 +22,15 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
     throw new Error('config.yaml: directories must be an array of strings');
   }
 
+  if (obj.ignore_directories !== undefined) {
+    if (
+      !Array.isArray(obj.ignore_directories) ||
+      !obj.ignore_directories.every((d) => typeof d === 'string')
+    ) {
+      throw new Error('config.yaml: ignore_directories must be an array of strings if specified');
+    }
+  }
+
   let extensions: string[] = [];
   if (Array.isArray(obj.extensions)) {
     if (!obj.extensions.every((e) => typeof e === 'string')) {
@@ -47,8 +56,8 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
       : obj.update_records === undefined
         ? undefined
         : (() => {
-            throw new Error('config.yaml: update_records must be a boolean if specified');
-          })();
+          throw new Error('config.yaml: update_records must be a boolean if specified');
+        })();
 
   const process_directories =
     typeof obj.process_directories === 'boolean'
@@ -56,8 +65,8 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
       : obj.process_directories === undefined
         ? undefined
         : (() => {
-            throw new Error('config.yaml: process_directories must be a boolean if specified');
-          })();
+          throw new Error('config.yaml: process_directories must be a boolean if specified');
+        })();
 
   const resync_directories =
     typeof obj.resync_directories === 'boolean'
@@ -65,8 +74,8 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
       : obj.resync_directories === undefined
         ? undefined
         : (() => {
-            throw new Error('config.yaml: resync_directories must be a boolean if specified');
-          })();
+          throw new Error('config.yaml: resync_directories must be a boolean if specified');
+        })();
 
   const resync_check_actual_file =
     typeof obj.resync_check_actual_file === 'boolean'
@@ -74,12 +83,14 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
       : obj.resync_check_actual_file === undefined
         ? undefined
         : (() => {
-            throw new Error('config.yaml: resync_check_actual_file must be a boolean if specified');
-          })();
+          throw new Error('config.yaml: resync_check_actual_file must be a boolean if specified');
+        })();
+
 
   return {
     dbName: obj.dbName,
     directories: obj.directories as string[],
+    ignore_directories: obj.ignore_directories as string[] | undefined,
     extensions,
     update_records,
     process_directories,
