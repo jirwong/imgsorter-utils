@@ -79,6 +79,7 @@ export const fileService = {
 
     async function walk(dir: string): Promise<void> {
       try {
+        console.log("Walking directory: ", dir);
         const entries = await fs.readdir(dir, { withFileTypes: true });
 
         for (const entry of entries) {
@@ -115,6 +116,8 @@ export const fileService = {
     const result: string[] = [];
 
     async function walk(dir: string): Promise<void> {
+      console.log("Walking directory: ", dir);
+
       try {
         const entries = await fs.readdir(dir, { withFileTypes: true });
 
