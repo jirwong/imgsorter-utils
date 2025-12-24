@@ -36,6 +36,12 @@ export class Runner {
     console.log('Processing directories:', directories);
 
     for (const directory of directories) {
+
+      if (this.config.ignore_directories && this.config.ignore_directories.includes(directory)) {
+        console.log(`Ignoring directory: ${directory}`);
+        continue;
+      }
+
       const files = await fileService.listFilesRecursive(directory, extensions);
 
       for (const file of files) {
@@ -52,6 +58,12 @@ export class Runner {
     console.log('Resyncing directories:', directories);
 
     for (const directory of directories) {
+
+      if (this.config.ignore_directories && this.config.ignore_directories.includes(directory)) {
+        console.log(`Ignoring directory: ${directory}`);
+        continue;
+      }
+
       const entries = this.db.getFileEntriesByDirectory(directory);
 
       if (checkActualFile) {
