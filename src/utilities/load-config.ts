@@ -41,29 +41,29 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
     throw new Error('config.yaml: extensions must be a string or an array of strings');
   }
 
-  const updateRecords =
-    typeof obj.updateRecords === 'boolean'
-      ? obj.updateRecords
-      : obj.updateRecords === undefined
+  const update_records =
+    typeof obj.update_records === 'boolean'
+      ? obj.update_records
+      : obj.update_records === undefined
         ? undefined
         : (() => {
-            throw new Error('config.yaml: updateRecords must be a boolean if specified');
+            throw new Error('config.yaml: update_records must be a boolean if specified');
           })();
 
-  const processDirectories =
-    typeof obj.processDirectories === 'boolean'
-      ? obj.processDirectories
-      : obj.processDirectories === undefined
+  const process_directories =
+    typeof obj.process_directories === 'boolean'
+      ? obj.process_directories
+      : obj.process_directories === undefined
         ? undefined
         : (() => {
-            throw new Error('config.yaml: processDirectories must be a boolean if specified');
+            throw new Error('config.yaml: process_directories must be a boolean if specified');
           })();
 
   return {
     dbName: obj.dbName,
     directories: obj.directories as string[],
     extensions,
-    updateRecords,
-    processDirectories,
+    update_records,
+    process_directories,
   };
 }

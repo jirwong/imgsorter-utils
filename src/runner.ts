@@ -15,11 +15,13 @@ export class Runner {
   async run(): Promise<void> {
     console.log('Starting run...');
 
-    // TODO : Add configuration to toggle
-    await this.processDirectories();
+    if (this.config.process_directories) {
+      await this.processDirectories();
+    }
 
-    // TODO : Add configuration to toggle
-    this.updateRecords();
+    if (this.config.update_records) {
+      this.updateRecords();
+    }
 
     console.log('Run completed.');
   }

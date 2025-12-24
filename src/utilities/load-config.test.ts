@@ -36,8 +36,8 @@ describe('loadRunConfiguration', () => {
       extensions:
         - .png
         - jpg
-      updateRecords: true
-      processDirectories: false
+      update_records: true
+      process_directories: false
     `;
 
     await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
@@ -47,39 +47,39 @@ describe('loadRunConfiguration', () => {
     expect(config.dbName).toBe('test.db');
     expect(config.directories).toEqual(['./images', './more-images']);
     expect(config.extensions).toEqual(['.png', '.jpg']);
-    expect(config.updateRecords).toBe(true);
-    expect(config.processDirectories).toBe(false);
+    expect(config.update_records).toBe(true);
+    expect(config.process_directories).toBe(false);
   });
 
-  it('throws if updateRecords is not a boolean when provided', async () => {
+  it('throws if update_records is not a boolean when provided', async () => {
     const yamlContent = `
       dbName: test.db
       directories:
         - ./images
       extensions: .png
-      updateRecords: "yes"
+      update_records: "yes"
     `;
 
     await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
 
     await expect(loadRunConfiguration('config.yaml')).rejects.toThrow(
-      'config.yaml: updateRecords must be a boolean if specified',
+      'config.yaml: update_records must be a boolean if specified',
     );
   });
 
-  it('throws if processDirectories is not a boolean when provided', async () => {
+  it('throws if process_directories is not a boolean when provided', async () => {
     const yamlContent = `
       dbName: test.db
       directories:
         - ./images
       extensions: .png
-      processDirectories: 1
+      process_directories: 1
     `;
 
     await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
 
     await expect(loadRunConfiguration('config.yaml')).rejects.toThrow(
-      'config.yaml: processDirectories must be a boolean if specified',
+      'config.yaml: process_directories must be a boolean if specified',
     );
   });
 
@@ -95,8 +95,7 @@ describe('loadRunConfiguration', () => {
 
     const config = await loadRunConfiguration('config.yaml');
 
-    expect(config.updateRecords).toBeUndefined();
-    expect(config.processDirectories).toBeUndefined();
+    expect(config.update_records).toBeUndefined();
+    expect(config.process_directories).toBeUndefined();
   });
 });
-
