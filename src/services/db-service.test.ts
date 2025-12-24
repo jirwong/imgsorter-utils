@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promises as fs } from 'node:fs';
@@ -257,5 +257,161 @@ describe('DbService', () => {
     expect(e2.birthtime).toBe(entry2.birthtime.toISOString());
     expect(e2.hash).toBeNull();
     expect(e2.path).toBe(entry2.path);
+  });
+
+  it('deletes a file entry by id', () => {
+    const service = new DbService(dbPath);
+
+    const entry: FileEntry = {
+      size: 123,
+      directory: '/tmp',
+      extension: '.png',
+      path: '/tmp/foo.png',
+      filename: 'foo.png',
+      birthtime: new Date('2025-01-01T00:00:00.000Z'),
+      hash: 'abc123',
+    };
+
+    service.insertFileInfo(entry);
+
+    const db = new Database(dbPath);
+    const row = db.prepare('SELECT id FROM entries WHERE path = ?').get(entry.path) as { id: number };
+    expect(row).toBeTruthy();
+
+    service.deleteFileEntryById(row.id);
+
+    const after = db.prepare('SELECT id FROM entries WHERE id = ?').get(row.id) as { id: number } | undefined;
+    expect(after).toBeUndefined();
+
+    db.close();
+  });
+
+  it('updates file records based on entries', () => {
+    const service = new DbService(dbPath);
+
+    const entry1: FileEntry = {
+      size: 100,
+      directory: '/tmp/a',
+      extension: '.png',
+      path: '/tmp/a/foo.png',
+      filename: 'foo.png',
+      birthtime: new Date('2025-01-01T00:00:00.000Z'),
+      hash: 'hash-1',
+    };
+
+    const entry2: FileEntry = {
+      size: 200,
+      directory: '/tmp/b',
+      extension: '.png',
+      path: '/tmp/b/foo.png',
+      filename: 'foo.png',
+      birthtime: new Date('2025-01-02T00:00:00.000Z'),
+      hash: 'hash-1',
+    };
+
+    const otherHash: FileEntry = {
+      size: 300,
+      directory: '/tmp/c',
+      extension: '.png',
+      path: '/tmp/c/bar.png',
+      filename: 'bar.png',
+      birthtime: new Date('2025-01-03T00:00:00.000Z'),
+      hash: 'hash-2',
+    };
+
+    service.insertFileInfo(entry1);
+    service.insertFileInfo(entry2);
+    service.insertFileInfo(otherHash);
+
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    service.updateFileRecords();
+
+    consoleSpy.mockRestore();
+
+    const db = new Database(dbPath);
+    const rows = db
+      .prepare('SELECT filename, hash, count, directories FROM records ORDER BY filename, hash')
+      .all() as { filename: string; hash: string; count: number; directories: string }[];
+
+    expect(rows).toHaveLength(2);
+
+    const fooRecord = rows.find((r) => r.filename === 'foo.png' && r.hash === 'hash-1');
+    expect(fooRecord).toBeTruthy();
+    expect(fooRecord!.count).toBe(2);
+    expect(JSON.parse(fooRecord!.directories)).toEqual(expect.arrayContaining(['/tmp/a', '/tmp/b']));
+
+    const barRecord = rows.find((r) => r.filename === 'bar.png' && r.hash === 'hash-2');
+    expect(barRecord).toBeTruthy();
+    expect(barRecord!.count).toBe(1);
+    expect(JSON.parse(barRecord!.directories)).toEqual(['/tmp/c']);
+
+    db.close();
+  });
+
+  it('getFileEntriesByDirectory returns only entries for the specified directory', () => {
+    const service = new DbService(dbPath);
+
+    const entry1: FileEntry = {
+      size: 100,
+      directory: '/tmp/a',
+      extension: '.txt',
+      path: '/tmp/a/foo.txt',
+      filename: 'foo.txt',
+      birthtime: new Date('2025-01-01T00:00:00.000Z'),
+      hash: undefined,
+    };
+
+    const entry2: FileEntry = {
+      size: 200,
+      directory: '/tmp/b',
+      extension: '.log',
+      path: '/tmp/b/bar.log',
+      filename: 'bar.log',
+      birthtime: new Date('2025-02-02T00:00:00.000Z'),
+      hash: undefined,
+    };
+
+    service.insertFileInfo(entry1);
+    service.insertFileInfo(entry2);
+
+    const results = service.getFileEntriesByDirectory('/tmp/a');
+
+    expect(results).toHaveLength(1);
+    expect(results[0].directory).toBe('/tmp/a');
+    expect(results[0].path).toBe(entry1.path);
+  });
+
+  it('deleteFileEntryByPath removes the matching entry and is harmless if called again', () => {
+    const service = new DbService(dbPath);
+
+    const entry: FileEntry = {
+      size: 123,
+      directory: '/tmp',
+      extension: '.png',
+      path: '/tmp/foo.png',
+      filename: 'foo.png',
+      birthtime: new Date('2025-01-01T00:00:00.000Z'),
+      hash: 'abc123',
+    };
+
+    service.insertFileInfo(entry);
+
+    const db = new Database(dbPath);
+
+    let count = db.prepare('SELECT COUNT(*) as c FROM entries WHERE path = ?').get(entry.path) as { c: number };
+    expect(count.c).toBe(1);
+
+    service.deleteFileEntryByPath(entry.path);
+
+    count = db.prepare('SELECT COUNT(*) as c FROM entries WHERE path = ?').get(entry.path) as { c: number };
+    expect(count.c).toBe(0);
+
+    // second call should not throw and still result in no rows
+    service.deleteFileEntryByPath(entry.path);
+    count = db.prepare('SELECT COUNT(*) as c FROM entries WHERE path = ?').get(entry.path) as { c: number };
+    expect(count.c).toBe(0);
+
+    db.close();
   });
 });

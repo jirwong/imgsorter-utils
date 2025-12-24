@@ -131,4 +131,19 @@ export class DbService {
     const selectSql = `SELECT size, directory, extension, filename, birthtime, hash, path FROM entries`;
     return this.db.prepare(selectSql).all() as FileEntry[];
   }
+
+  getFileEntriesByDirectory(directory: string) {
+    const selectSql = `SELECT size, directory, extension, filename, birthtime, hash, path FROM entries WHERE directory = ?`;
+    return this.db.prepare(selectSql).all(directory) as FileEntry[];
+  }
+
+  deleteFileEntryById(id: number) {
+    const deleteSql = `DELETE FROM entries WHERE id = ?`;
+    this.db.prepare(deleteSql).run(id);
+  }
+
+  deleteFileEntryByPath(path: string) {
+    const deleteSql = `DELETE FROM entries WHERE path = ?`;
+    this.db.prepare(deleteSql).run(path);
+  }
 }

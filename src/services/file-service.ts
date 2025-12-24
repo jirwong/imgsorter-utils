@@ -6,7 +6,7 @@ import type { FileEntry } from '../types/file-types';
 const EDGE_CHUNK_SIZE = 16 * 1024; // 16KB
 
 export const fileService = {
-  async doesFileExist(path: string): Promise<boolean> {
+  async fileExists(path: string): Promise<boolean> {
     try {
       await fs.access(path);
       return true;

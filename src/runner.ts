@@ -23,6 +23,10 @@ export class Runner {
       this.updateRecords();
     }
 
+    if (this.config.resync_directories) {
+      await this.resyncDirectories();
+    }
+
     console.log('Run completed.');
   }
 
@@ -40,6 +44,24 @@ export class Runner {
     }
 
     console.log('Processed all directories.');
+  }
+
+  private async resyncDirectories(): Promise<void> {
+    const { directories } = this.config;
+
+    console.log('Resyncing directories:', directories);
+
+    for (const directory of directories) {
+      const entries = this.db.getFileEntriesByDirectory(directory);
+
+      for (const entry of entries) {
+        const exists = await fileService.fileExists(entry.path);
+        if (!exists) {
+          this.db.deleteFileEntryByPath(entry.path);
+          console.log(`Deleted missing file entry: ${entry.path}`);
+        }
+      }
+    }
   }
 
   private updateRecords() {
