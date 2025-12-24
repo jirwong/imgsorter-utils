@@ -50,7 +50,7 @@ describe('DbService', () => {
       'path',
     ]);
 
-    expect(recordsColumns.map((c) => c.name)).toEqual(['id', 'filename', 'hash', 'count', 'directories']);
+    expect(recordsColumns.map((c) => c.name)).toEqual(['id', 'filename', 'hash', 'count', 'directories', 'size']);
 
     db.close();
   });
@@ -100,6 +100,7 @@ describe('DbService', () => {
       hash: 'def456',
       count: 2,
       directories: ['/tmp/a', '/tmp/b'],
+      size: 200,
     };
 
     service.insertFileRecord(record);
@@ -180,6 +181,7 @@ describe('DbService', () => {
       hash: 'ghi789',
       count: 1,
       directories: ['/tmp/x'],
+      size: 300,
     };
 
     const updated: FileRecord = {
