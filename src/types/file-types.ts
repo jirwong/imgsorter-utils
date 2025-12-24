@@ -12,6 +12,6 @@ export type FileRecord = {
   filename: string;
   hash: string;
   count: number;
-  directories: string[];
+  directories: string;
   size:number;
 };

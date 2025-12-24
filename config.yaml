@@ -5,55 +5,56 @@ update_records: true
 resync_directories: false
 resync_check_actual_file: false
 directories:
-  - C:\Users\jirwo\Pictures
-  - D:\Lorraine
-  - D:\personal\Backup
-  - D:\personal\Desktop Backups
-  - D:\personal\Downloads
-  - D:\personal\From Note 3 Backup
-  - D:\personal\Previous Windows Backup
-  - D:\personal\Rental
-  - D:\personal\Scanned Documents
-  - D:\Photos
-  - G:\Aiden
-  - G:\Hi Res Pre Wedding Photos
-  - G:\Melbourne
-  - G:\My Dear pictures
-  - G:\My Wedding
-  - G:\myShow
-  - G:\MyValentines
-  - G:\Old Stuff
-  - G:\Pix
-  - G:\Wedding
-  - G:\wspace
-  - I:\Japan Photos
-  - I:\Desktop backup
-  - I:\Aiden Ipad 
-  - Z:\Pictures\Aiden
-  - Z:\Pictures\Aqeela
-  - Z:\Pictures\bentley
-  - Z:\Pictures\Concerts
-  - Z:\Pictures\Hi Res Pre Wedding Photos
-  - Z:\Pictures\Japan Photos
-  - Z:\Pictures\Lorraine
-  - Z:\Pictures\Melbourne
-  - Z:\Pictures\Moms Phone
-  - Z:\Pictures\Mt Buller
-  - Z:\Pictures\My Dear pictures
-  - Z:\Pictures\myShow
-  - Z:\Pictures\MyValentines
-  - Z:\Pictures\MyWedding
-  - Z:\Pictures\Old Stuff
-  - Z:\Pictures\Pix
-  - Z:\Pictures\Sony Cybershot
-  - Z:\Pictures\Wedding
-  - Z:\Pictures\wspace
-  - Z:\Jir\Documents\Aiden
-  - Z:\Jir\Documents\Camera
-  - Z:\Jir\Documents\Images
-  - Z:\Jir\Documents\Whatsapp
-  - Z:\Jir\Jir Google Drive\My photos
-  - Z:\Jir\Jir Google Drive\Whitehorse Hip Hop
-  - Z:\Lorraine
+  - C:\Users\jirwo\Pictures\Luminar Neo Catalog\CacheDocuments\resources
+  # - C:\Users\jirwo\Pictures
+  # - D:\Lorraine
+  # - D:\personal\Backup
+  # - D:\personal\Desktop Backups
+  # - D:\personal\Downloads
+  # - D:\personal\From Note 3 Backup
+  # - D:\personal\Previous Windows Backup
+  # - D:\personal\Rental
+  # - D:\personal\Scanned Documents
+  # - D:\Photos
+  # - G:\Aiden
+  # - G:\Hi Res Pre Wedding Photos
+  # - G:\Melbourne
+  # - G:\My Dear pictures
+  # - G:\My Wedding
+  # - G:\myShow
+  # - G:\MyValentines
+  # - G:\Old Stuff
+  # - G:\Pix
+  # - G:\Wedding
+  # - G:\wspace
+  # - I:\Japan Photos
+  # - I:\Desktop backup
+  # - I:\Aiden Ipad 
+  # - Z:\Pictures\Aiden
+  # - Z:\Pictures\Aqeela
+  # - Z:\Pictures\bentley
+  # - Z:\Pictures\Concerts
+  # - Z:\Pictures\Hi Res Pre Wedding Photos
+  # - Z:\Pictures\Japan Photos
+  # - Z:\Pictures\Lorraine
+  # - Z:\Pictures\Melbourne
+  # - Z:\Pictures\Moms Phone
+  # - Z:\Pictures\Mt Buller
+  # - Z:\Pictures\My Dear pictures
+  # - Z:\Pictures\myShow
+  # - Z:\Pictures\MyValentines
+  # - Z:\Pictures\MyWedding
+  # - Z:\Pictures\Old Stuff
+  # - Z:\Pictures\Pix
+  # - Z:\Pictures\Sony Cybershot
+  # - Z:\Pictures\Wedding
+  # - Z:\Pictures\wspace
+  # - Z:\Jir\Documents\Aiden
+  # - Z:\Jir\Documents\Camera
+  # - Z:\Jir\Documents\Images
+  # - Z:\Jir\Documents\Whatsapp
+  # - Z:\Jir\Jir Google Drive\My photos
+  # - Z:\Jir\Jir Google Drive\Whitehorse Hip Hop
+  # - Z:\Lorraine
 ignore_directories:
   - C:\Users\jirwo\Pictures\Luminar Neo Catalog\CacheDocuments\resources

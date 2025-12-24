@@ -94,7 +94,7 @@ export class DbService {
       filename: fileRecord.filename,
       hash: fileRecord.hash,
       count: fileRecord.count,
-      directories: JSON.stringify(fileRecord.directories),
+      directories: fileRecord.directories,
       size: fileRecord.size,
     });
   }
@@ -103,7 +103,7 @@ export class DbService {
     const dedupSql = `select hash,
               filename,
               size,
-              REPLACE(json_group_array(distinct directory),'\\','\') as directories,
+              cast(json_group_array(distinct directory) as varchar) as directories,
               count(*)                             as row_count
        from entries
        group by hash, filename, size
@@ -123,7 +123,8 @@ export class DbService {
         filename: row.filename,
         hash: row.hash,
         count: row.row_count,
-        directories: JSON.parse(row.directories) as string[],
+        // replace \\ with \ to fix Windows paths stored in JSON array
+        directories: row.directories.replace(/\\\\/g, '\\'),
         size: row.size,
       };
 

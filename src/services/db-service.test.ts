@@ -99,7 +99,7 @@ describe('DbService', () => {
       filename: 'bar.png',
       hash: 'def456',
       count: 2,
-      directories: ['/tmp/a', '/tmp/b'],
+      directories: `['/tmp/a', '/tmp/b']`,
       size: 200,
     };
 
@@ -118,7 +118,7 @@ describe('DbService', () => {
     expect(row.filename).toBe(record.filename);
     expect(row.hash).toBe(record.hash);
     expect(row.count).toBe(record.count);
-    expect(JSON.parse(row.directories)).toEqual(record.directories);
+    expect(row.directories).toEqual(record.directories);
 
     db.close();
   });
@@ -180,14 +180,14 @@ describe('DbService', () => {
       filename: 'baz.png',
       hash: 'ghi789',
       count: 1,
-      directories: ['/tmp/x'],
+      directories: `['/tmp/x']`,
       size: 300,
     };
 
     const updated: FileRecord = {
       ...original,
       count: 3,
-      directories: ['/tmp/x', '/tmp/y'],
+      directories: `['/tmp/x','/tmp/y']`,
     };
 
     service.insertFileRecord(original);
@@ -206,7 +206,7 @@ describe('DbService', () => {
     expect(row.filename).toBe(updated.filename);
     expect(row.hash).toBe(updated.hash);
     expect(row.count).toBe(updated.count);
-    expect(JSON.parse(row.directories)).toEqual(updated.directories);
+    expect(row.directories).toEqual(updated.directories);
 
     db.close();
   });
@@ -344,12 +344,15 @@ describe('DbService', () => {
     const fooRecord = rows.find((r) => r.filename === 'foo.png' && r.hash === 'hash-1');
     expect(fooRecord).toBeTruthy();
     expect(fooRecord!.count).toBe(2);
-    expect(JSON.parse(fooRecord!.directories)).toEqual(expect.arrayContaining(['/tmp/a', '/tmp/b']));
+
+    console.log('Foo directories:', fooRecord!.directories);
+
+    expect(fooRecord!.directories).toEqual(`["/tmp/a","/tmp/b"]`);
 
     const barRecord = rows.find((r) => r.filename === 'bar.png' && r.hash === 'hash-2');
     expect(barRecord).toBeTruthy();
     expect(barRecord!.count).toBe(1);
-    expect(JSON.parse(barRecord!.directories)).toEqual(['/tmp/c']);
+    expect(barRecord!.directories).toEqual(`["/tmp/c"]`);
 
     db.close();
   });
