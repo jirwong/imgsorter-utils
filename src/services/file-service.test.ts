@@ -208,4 +208,21 @@ describe('fileService', () => {
       expect(paths).toContain(goodFile);
     });
   });
+
+  describe('listFilePathsRecursive', () => {
+    it('returns all file paths in nested directories', async () => {
+      const file1 = await createFile(rootDir, 'a/photo1.jpg', 'one');
+      const file2 = await createFile(rootDir, 'a/b/photo2.JPG', 'two');
+      const file3 = await createFile(rootDir, 'c/note.txt', 'three');
+
+      const paths = await fileService.listFilePathsRecursive(rootDir);
+
+      expect(paths.sort()).toEqual([file1, file2, file3].sort());
+    });
+
+    it('returns an empty array when there are no files', async () => {
+      const paths = await fileService.listFilePathsRecursive(rootDir);
+      expect(paths).toEqual([]);
+    });
+  });
 });

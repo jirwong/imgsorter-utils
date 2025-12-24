@@ -68,7 +68,7 @@ export const fileService = {
     }
   },
 
-  // Recursively list all files under a directory
+  // Recursively list all files under a directory and return detailed FileEntry objects
   async listFilesRecursive(rootDir: string, extensions?: string[], getHash: boolean = true): Promise<FileEntry[]> {
     const result: FileEntry[] = [];
 
@@ -98,6 +98,33 @@ export const fileService = {
             }
 
             result.push(info);
+          }
+        }
+      } catch (ex) {
+        console.error('!!! ERROR', ex);
+      }
+    }
+
+    await walk(rootDir);
+
+    return result;
+  },
+
+  // Recursively list all file paths under a directory without reading file metadata
+  async listFilePathsRecursive(rootDir: string): Promise<string[]> {
+    const result: string[] = [];
+
+    async function walk(dir: string): Promise<void> {
+      try {
+        const entries = await fs.readdir(dir, { withFileTypes: true });
+
+        for (const entry of entries) {
+          const fullPath = join(dir, entry.name);
+
+          if (entry.isDirectory()) {
+            await walk(fullPath);
+          } else if (entry.isFile()) {
+            result.push(fullPath);
           }
         }
       } catch (ex) {

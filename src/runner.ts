@@ -66,9 +66,10 @@ export class Runner {
         }
       } else {
         console.log('Checking file entries against current directory listing...');
-        const files = await fileService.listFilesRecursive(directory, extensions, false);
+        const files = await fileService.listFilePathsRecursive(directory);
         for (const entry of entries) {
-          const found = files.find((file) => file.path === entry.path);
+          console.log(`Verifying file entry: ${entry.path}`);
+          const found = files.find((file) => file === entry.path);
           if (!found) {
             this.db.deleteFileEntryByPath(entry.path);
             console.log(`Deleted missing file entry: ${entry.path}`);
