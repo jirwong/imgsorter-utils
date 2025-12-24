@@ -59,11 +59,21 @@ export async function loadRunConfiguration(fileName: string): Promise<RunConfigu
             throw new Error('config.yaml: process_directories must be a boolean if specified');
           })();
 
+  const resync_directories =
+    typeof obj.resync_directories === 'boolean'
+      ? obj.resync_directories
+      : obj.resync_directories === undefined
+        ? undefined
+        : (() => {
+            throw new Error('config.yaml: resync_directories must be a boolean if specified');
+          })();
+
   return {
     dbName: obj.dbName,
     directories: obj.directories as string[],
     extensions,
     update_records,
     process_directories,
+    resync_directories,
   };
 }

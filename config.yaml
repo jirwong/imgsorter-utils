@@ -2,6 +2,7 @@ dbName: local.db
 extensions: jpg,png,gif,jpeg,mp4,cr3,mov,avi,jpeg,mpg,mpeg,iso,pdf,txt,cr2,zip,doc,docx,xls,xlsx,ppt,pptx
 process_directories: true
 update_records: true
+resync_directories: false
 directories:
 #   - I:\Japan Photos # Done
   # - I:\Desktop backup # Done

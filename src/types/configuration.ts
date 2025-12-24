@@ -4,4 +4,5 @@ export type RunConfiguration = {
   directories: string[];
   update_records?: boolean;
   process_directories?: boolean;
+  resync_directories?: boolean;
 };
