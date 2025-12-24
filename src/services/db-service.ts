@@ -47,6 +47,7 @@ export class DbService {
         hash TEXT,
         count INTEGER,
         directories TEXT,
+        size INTEGER,
         UNIQUE(filename, hash)
     )`
       )
@@ -82,27 +83,30 @@ export class DbService {
 
   insertFileRecord(fileRecord: FileRecord) {
     const insertSql = this.db.prepare(
-      `INSERT INTO records (filename, hash, count, directories)
-       VALUES (@filename, @hash, @count, @directories)
+      `INSERT INTO records (filename, hash, count, directories, size)
+       VALUES (@filename, @hash, @count, @directories, @size)
        ON CONFLICT(filename, hash) DO UPDATE SET
          count = excluded.count,
-         directories = excluded.directories`
+         directories = excluded.directories,
+         size = excluded.size`
     );
     insertSql.run({
       filename: fileRecord.filename,
       hash: fileRecord.hash,
       count: fileRecord.count,
       directories: JSON.stringify(fileRecord.directories),
+      size: fileRecord.size,
     });
   }
 
   updateFileRecords() {
     const dedupSql = `select hash,
               filename,
+              size,
               json_group_array(distinct directory) as directories,
               count(*)                             as row_count
        from entries
-       group by hash, filename
+       group by hash, filename, size
        order by filename;
       `;
 
@@ -111,6 +115,7 @@ export class DbService {
       filename: string;
       directories: string;
       row_count: number;
+      size: number;
     }[];
 
     for (const row of rows) {
@@ -119,9 +124,10 @@ export class DbService {
         hash: row.hash,
         count: row.row_count,
         directories: JSON.parse(row.directories) as string[],
+        size: row.size,
       };
 
-      console.log('Updating record for hash:', record.hash, 'filename:', record.filename);
+      console.log('Updating record for hash:', record.hash, 'filename:', record.filename, 'count:', record.count, 'size:', record.size);
 
       this.insertFileRecord(record);
     }

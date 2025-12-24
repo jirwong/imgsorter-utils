@@ -300,7 +300,7 @@ describe('DbService', () => {
     };
 
     const entry2: FileEntry = {
-      size: 200,
+      size: 100,
       directory: '/tmp/b',
       extension: '.png',
       path: '/tmp/b/foo.png',
@@ -310,7 +310,7 @@ describe('DbService', () => {
     };
 
     const otherHash: FileEntry = {
-      size: 300,
+      size: 200,
       directory: '/tmp/c',
       extension: '.png',
       path: '/tmp/c/bar.png',
