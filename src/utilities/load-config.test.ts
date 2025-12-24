@@ -65,7 +65,7 @@ describe('loadRunConfiguration', () => {
     await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
 
     await expect(loadRunConfiguration('config.yaml')).rejects.toThrow(
-      'config.yaml: update_records must be a boolean if specified',
+      'config.yaml: update_records must be a boolean if specified'
     );
   });
 
@@ -81,7 +81,7 @@ describe('loadRunConfiguration', () => {
     await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
 
     await expect(loadRunConfiguration('config.yaml')).rejects.toThrow(
-      'config.yaml: process_directories must be a boolean if specified',
+      'config.yaml: process_directories must be a boolean if specified'
     );
   });
 
@@ -97,7 +97,7 @@ describe('loadRunConfiguration', () => {
     await fs.writeFile(join(tempDir, 'config.yaml'), yamlContent, 'utf8');
 
     await expect(loadRunConfiguration('config.yaml')).rejects.toThrow(
-      'config.yaml: resync_directories must be a boolean if specified',
+      'config.yaml: resync_directories must be a boolean if specified'
     );
   });
 

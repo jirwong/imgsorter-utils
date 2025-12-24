@@ -19,12 +19,12 @@ export class Runner {
       await this.processDirectories();
     }
 
-    if (this.config.update_records) {
-      this.updateRecords();
-    }
-
     if (this.config.resync_directories) {
       await this.resyncDirectories();
+    }
+
+    if (this.config.update_records) {
+      this.updateRecords();
     }
 
     console.log('Run completed.');

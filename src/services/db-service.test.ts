@@ -330,9 +330,12 @@ describe('DbService', () => {
     consoleSpy.mockRestore();
 
     const db = new Database(dbPath);
-    const rows = db
-      .prepare('SELECT filename, hash, count, directories FROM records ORDER BY filename, hash')
-      .all() as { filename: string; hash: string; count: number; directories: string }[];
+    const rows = db.prepare('SELECT filename, hash, count, directories FROM records ORDER BY filename, hash').all() as {
+      filename: string;
+      hash: string;
+      count: number;
+      directories: string;
+    }[];
 
     expect(rows).toHaveLength(2);
 
