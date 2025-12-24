@@ -126,4 +126,9 @@ export class DbService {
       this.insertFileRecord(record);
     }
   }
+
+  getFileEntries() {
+    const selectSql = `SELECT size, directory, extension, filename, birthtime, hash, path FROM entries`;
+    return this.db.prepare(selectSql).all() as FileEntry[];
+  }
 }

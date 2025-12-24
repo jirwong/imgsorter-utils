@@ -208,4 +208,54 @@ describe('DbService', () => {
 
     db.close();
   });
+
+  it('returns all file entries from the entries table via getFileEntries', () => {
+    const service = new DbService(dbPath);
+
+    const entry1: FileEntry = {
+      size: 100,
+      directory: '/tmp/a',
+      extension: '.txt',
+      path: '/tmp/a/foo.txt',
+      filename: 'foo.txt',
+      birthtime: new Date('2025-01-01T00:00:00.000Z'),
+      hash: 'hash-1',
+    };
+
+    const entry2: FileEntry = {
+      size: 200,
+      directory: '/tmp/b',
+      extension: '.log',
+      path: '/tmp/b/bar.log',
+      filename: 'bar.log',
+      birthtime: new Date('2025-02-02T00:00:00.000Z'),
+    };
+
+    service.insertFileInfo(entry1);
+    service.insertFileInfo(entry2);
+
+    const entries = service.getFileEntries();
+
+    expect(entries).toHaveLength(2);
+
+    const byPath = new Map(entries.map((e) => [e.path, e]));
+
+    const e1 = byPath.get(entry1.path)!;
+    expect(e1.size).toBe(entry1.size);
+    expect(e1.directory).toBe(entry1.directory);
+    expect(e1.extension).toBe(entry1.extension);
+    expect(e1.filename).toBe(entry1.filename);
+    expect(e1.birthtime).toBe(entry1.birthtime.toISOString());
+    expect(e1.hash).toBe(entry1.hash);
+    expect(e1.path).toBe(entry1.path);
+
+    const e2 = byPath.get(entry2.path)!;
+    expect(e2.size).toBe(entry2.size);
+    expect(e2.directory).toBe(entry2.directory);
+    expect(e2.extension).toBe(entry2.extension);
+    expect(e2.filename).toBe(entry2.filename);
+    expect(e2.birthtime).toBe(entry2.birthtime.toISOString());
+    expect(e2.hash).toBeNull();
+    expect(e2.path).toBe(entry2.path);
+  });
 });

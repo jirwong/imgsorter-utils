@@ -40,7 +40,7 @@ export class Runner {
     console.log('Processed all directories.');
   }
 
-  private async updateRecords() {
+  private updateRecords() {
     console.log('Updating database record...');
     this.db.updateFileRecords();
   }
