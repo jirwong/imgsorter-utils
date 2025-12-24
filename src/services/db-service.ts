@@ -103,7 +103,7 @@ export class DbService {
     const dedupSql = `select hash,
               filename,
               size,
-              json_group_array(distinct directory) as directories,
+              REPLACE(json_group_array(distinct directory),'\\','\') as directories,
               count(*)                             as row_count
        from entries
        group by hash, filename, size
