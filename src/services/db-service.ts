@@ -133,8 +133,11 @@ export class DbService {
   }
 
   getFileEntriesByDirectory(directory: string) {
-    const selectSql = `SELECT size, directory, extension, filename, birthtime, hash, path FROM entries WHERE directory = ?`;
-    return this.db.prepare(selectSql).all(directory) as FileEntry[];
+    // Use LIKE so callers can pass a prefix (e.g. 'C:\\Jir%') to match subdirectories.
+    // If the caller does not include a wildcard, we append '%' to match any suffix.
+    const pattern = directory.includes('%') || directory.includes('_') ? directory : `${directory}%`;
+    const selectSql = `SELECT size, directory, extension, filename, birthtime, hash, path FROM entries WHERE directory LIKE ?`;
+    return this.db.prepare(selectSql).all(pattern) as FileEntry[];
   }
 
   deleteFileEntryById(id: number) {

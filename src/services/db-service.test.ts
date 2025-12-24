@@ -349,7 +349,7 @@ describe('DbService', () => {
     db.close();
   });
 
-  it('getFileEntriesByDirectory returns only entries for the specified directory', () => {
+  it('getFileEntriesByDirectory returns entries whose directory matches the given prefix', () => {
     const service = new DbService(dbPath);
 
     const entry1: FileEntry = {
@@ -364,22 +364,34 @@ describe('DbService', () => {
 
     const entry2: FileEntry = {
       size: 200,
-      directory: '/tmp/b',
+      directory: '/tmp/a/sub',
       extension: '.log',
-      path: '/tmp/b/bar.log',
+      path: '/tmp/a/sub/bar.log',
       filename: 'bar.log',
       birthtime: new Date('2025-02-02T00:00:00.000Z'),
       hash: undefined,
     };
 
+    const entryOtherDir: FileEntry = {
+      size: 300,
+      directory: '/tmp/b',
+      extension: '.log',
+      path: '/tmp/b/other.log',
+      filename: 'other.log',
+      birthtime: new Date('2025-03-03T00:00:00.000Z'),
+      hash: undefined,
+    };
+
     service.insertFileInfo(entry1);
     service.insertFileInfo(entry2);
+    service.insertFileInfo(entryOtherDir);
 
     const results = service.getFileEntriesByDirectory('/tmp/a');
 
-    expect(results).toHaveLength(1);
-    expect(results[0].directory).toBe('/tmp/a');
-    expect(results[0].path).toBe(entry1.path);
+    const dirs = results.map((r) => r.directory).sort();
+    expect(dirs).toEqual(['/tmp/a', '/tmp/a/sub']);
+    const paths = results.map((r) => r.path).sort();
+    expect(paths).toEqual([entry1.path, entry2.path].sort());
   });
 
   it('deleteFileEntryByPath removes the matching entry and is harmless if called again', () => {

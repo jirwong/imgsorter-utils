@@ -55,6 +55,7 @@ export class Runner {
       const entries = this.db.getFileEntriesByDirectory(directory);
 
       for (const entry of entries) {
+        console.log(`Checking file existence: ${entry.path}`);
         const exists = await fileService.fileExists(entry.path);
         if (!exists) {
           this.db.deleteFileEntryByPath(entry.path);
