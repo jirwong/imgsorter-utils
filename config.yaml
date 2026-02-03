@@ -73,4 +73,5 @@ directories:
 # Directories to ignore during indexing
 ignore_directories:
   - C:\Users\jirwo\Pictures\Luminar Neo Catalog
+  - C:\Users\jirwo\Pictures\Luminar Neo Catalog\PreviewCache
   - C:\Users\jirwo\Pictures\Luminar Neo Catalog\CacheDocuments\resources

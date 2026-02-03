@@ -42,7 +42,7 @@ export class Runner {
         continue;
       }
 
-      const files = await fileService.listFilesRecursive(directory, extensions);
+      const files = await fileService.listFilesRecursive(directory, extensions, true, this.config.ignore_directories);
 
       for (const file of files) {
         this.db.insertFileInfo(file);

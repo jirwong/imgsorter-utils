@@ -69,7 +69,7 @@ export const fileService = {
   },
 
   // Recursively list all files under a directory and return detailed FileEntry objects
-  async listFilesRecursive(rootDir: string, extensions?: string[], getHash: boolean = true): Promise<FileEntry[]> {
+  async listFilesRecursive(rootDir: string, extensions?: string[], getHash: boolean = true, ignoreDirectories?: string[]): Promise<FileEntry[]> {
     const result: FileEntry[] = [];
 
     // Normalize extensions to lowercase once for case-insensitive matching
@@ -86,6 +86,10 @@ export const fileService = {
           const fullPath = join(dir, entry.name);
 
           if (entry.isDirectory()) {
+            if (ignoreDirectories && ignoreDirectories.includes(fullPath)) {
+              console.log(`Ignoring directory during file listing: ${fullPath}`);
+              continue;
+            }
             await walk(fullPath);
           } else if (entry.isFile()) {
             const info = await fileService.readFileInfo(fullPath, getHash);
@@ -102,7 +106,7 @@ export const fileService = {
           }
         }
       } catch (ex) {
-        console.error('!!! ERROR', ex);
+        console.error('ERROR', ex);
       }
     }
 
