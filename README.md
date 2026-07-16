@@ -1,0 +1,136 @@
+# imgsorter-utils
+
+A TypeScript/Node.js utility for indexing local files and detecting duplicates across directories.
+
+## What it does
+
+`imgsorter-utils` walks configured directories, collects metadata (filename, size, extension, birthtime, and a fast edge-based SHA-256 hash) for each file, and stores the data in a local SQLite database. It can then resync the database against the filesystem and update a summary `records` table that groups files by filename, size, and hash — making it easy to spot duplicates and see which directories contain the same file.
+
+## Features
+
+- Recursive directory scanning with configurable file extensions
+- Fast edge hashing: hashes the first and last 16 KB of each file instead of the whole file
+- SQLite storage with `entries` (per-file metadata) and `records` (duplicate grouping) tables
+- Resync mode to remove stale database entries when files have been deleted or moved
+- Case-insensitive extension filtering
+- YAML-based configuration
+- Vitest test coverage for core services
+
+## Project structure
+
+```
+imgsorter-utils/
+├── src/
+│   ├── runner.ts              # Entry point that orchestrates the run
+│   ├── services/
+│   │   ├── db-service.ts      # SQLite database operations
+│   │   ├── file-service.ts    # File listing, metadata, and hashing
+│   ├── types/
+│   │   ├── configuration.ts   # RunConfiguration type
+│   │   ├── file-types.ts      # FileEntry and FileRecord types
+│   └── utilities/
+│       └── load-config.ts     # YAML config loader
+├── config.yaml                # User configuration
+├── tsconfig.json
+├── vitest.config.ts
+├── package.json
+└── pnpm-workspace.yaml
+```
+
+## Getting started
+
+### Prerequisites
+
+- Node.js (version matching the project's `package.json`)
+- pnpm (version listed in `packageManager`)
+
+### Install dependencies
+
+```bash
+pnpm install
+```
+
+### Configure
+
+Edit `config.yaml` to set your desired database name, file extensions, and directories to scan. For example:
+
+```yaml
+# SQLite database filename (creates local.db if it does not exist)
+dbName: local.db
+
+# File extensions to index. Can be a comma-separated string or an array of strings.
+# Extension matching is case-insensitive, and leading dots are optional.
+extensions: jpg,png,gif,jpeg,mp4,mov
+
+# Whether to scan and index the configured directories.
+# Set to false to skip the directory scanning step.
+process_directories: true
+
+# Whether to rebuild the duplicate summary `records` table from the `entries` table.
+# This groups files by filename, size, and hash so duplicates are easy to find.
+update_records: true
+
+# Whether to remove stale entries from the database when files have been deleted
+# or moved outside the application. Useful when you know directories have changed.
+resync_directories: false
+
+# When resync_directories is true, this controls how stale entries are detected.
+# true  = verify each database entry by checking the filesystem directly.
+# false = compare database entries against the current directory listing.
+resync_check_actual_file: false
+
+# Directories to scan recursively.
+directories:
+  - C:\Users\YourName\Pictures
+
+# Directories to skip during scanning. These paths and their contents are ignored.
+ignore_directories:
+  - C:\Users\YourName\Pictures\Luminar Neo Catalog
+```
+
+### Run the utility
+
+```bash
+pnpm start
+```
+
+## Scripts
+
+| Script | Description |
+|--------|-------------|
+| `pnpm build` | Compile TypeScript to `dist/` |
+| `pnpm clean` | Remove the `dist/` directory |
+| `pnpm test` | Run the Vitest test suite |
+| `pnpm start` | Run the utility with `tsx` |
+| `pnpm format` | Format the codebase with Prettier |
+
+## Configuration options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `dbName` | string | SQLite database filename |
+| `extensions` | string or string[] | File extensions to index (e.g. `jpg,png` or `[.jpg, .png]`) |
+| `directories` | string[] | Directories to scan recursively |
+| `ignore_directories` | string[] | Directories to skip during scanning |
+| `process_directories` | boolean | Whether to scan and index directories |
+| `update_records` | boolean | Whether to rebuild the duplicate summary `records` table |
+| `resync_directories` | boolean | Whether to remove stale entries from the database |
+| `resync_check_actual_file` | boolean | If true, verify each database entry by checking the filesystem; otherwise compare against the current directory listing |
+
+## How hashing works
+
+The utility computes a SHA-256 hash of the first 16 KB and the last 16 KB of each file. This is fast for large media files while still producing different hashes for most files with different content. Very small files (smaller than 32 KB) are handled without double-reading overlapping regions.
+
+## Testing
+
+Run the test suite with:
+
+```bash
+pnpm test
+```
+
+Tests cover database CRUD operations, file hashing, recursive directory listing, and YAML configuration loading.
+
+## License
+
+ISC

@@ -19,7 +19,7 @@ resync_check_actual_file: false
 # Directories to index
 directories:
   - C:\Users\jirwo\Pictures
-  - C:\Users\jirwo\Desktop\Lorraine Huawei 2024
+  # - C:\Users\jirwo\Desktop\Lorraine Huawei 2024
   # - D:\Lorraine
   # - D:\personal\Backup
   # - D:\personal\Desktop Backups
@@ -39,6 +39,7 @@ directories:
   # - G:\Old Stuff
   # - G:\Pix
   # - G:\Wedding
+  # - G:\Aiden\Photos\Misc backups
   # - G:\wspace
   # - I:\Japan Photos
   # - I:\Desktop backup
